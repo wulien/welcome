@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="description" content="a depot implement with Django"/>
+    <meta name="keywords" content="django,depot" />
+    <meta name="author" content="wulien" />
+    <title>{% block title %} 标题 {% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      {% block content %}
+      内容
+      {% endblock %}
+    </div>
+  </body>
+</html>

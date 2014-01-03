@@ -1,0 +1,11 @@
+{% extends "welcomebase.html" %}
+{% block verifyinfo %}
+<p align="center">
+<font color = "red">
+{{ErrorMessage}}
+</font>
+</p>
+<p align="center">请输入验证码:
+<input type="text" name="verifyno">
+<input type="submit" value="确定" /></p>
+{% endblock %}
