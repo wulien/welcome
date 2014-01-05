@@ -19,4 +19,7 @@ urlpatterns = patterns('',
 urlpatterns += patterns('',
     url(r'^welcome/$', views.welcome),
     url(r'^wait/$', views.welcome),
+    url(r'^hello/$', views.hello),
+    # url(r'^verify/$', redirect_to, {'url': 'www.baidu.com'}),
+    # url(r'^verify/$', views.verify_no),
     )

@@ -1,12 +1,6 @@
-<html>
-    <body background = "../static/images/bg1.jpg">
-        <h1 align="center">Welcome</h1>
-        <hr />
-        <form action="/wait/" method="get">
-            <p align="center">请输入您的手机号码获取登录验证码：</p>
-            <p align="center"><input type="text" name="phoneno">
-            <input type="submit" value="发送" /></p>
-            
-        </form>
-    </body>
-</html>
+{% extends "welcomebase.html" %}
+{% block verifyinfo %}
+<p align="center">请输入验证码:
+<input type="text" name="verifyno">
+<input type="submit" value="确定" /></p>
+{% endblock %}

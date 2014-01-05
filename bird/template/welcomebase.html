@@ -2,14 +2,27 @@
     <body background = "../static/images/bg1.jpg">
         <h1 align="center">Welcome</h1>
         <hr />
-        <form action="/wait/" method="get">
+        {% if phone_no_error %}
+        <p align="center">
+        <font color = "red">
+        {{error_message}}
+        </font>
+        </p>
+        {% endif %}
+        {% if verify_no_error %}
+        <p align="center">
+        <font color = "red">
+        {{error_message}}
+        </font>
+        </p>
+        {% endif %}
+        <form action="" method="post">
             <p align="center">请输入您的手机号码获取登录验证码：</p>
-            <p align="center"><input type="text" name="phoneno">
-            <input type="submit" value="确定" /></p>
-            
-            {% block verifyinfo %}
-            内容
-            {% endblock %}
+            <p align="center"><input type="text" name="phone_no" value={{tmp_phone_no}}>
+            <input type="submit" name="phone" value="发送验证码" /></p>
+            <p align="center">请输入验证码:
+            <input type="text" name="verify_no" value={{tmp_verify_no}}>
+            <input type="submit" name="verify" value="确定" /></p>
             
         </form>
     </body>

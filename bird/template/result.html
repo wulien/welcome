@@ -1,9 +1,14 @@
 <html>
     <body background = "../static/images/bg1.jpg">
-        <h1 align="center">Your phone no</h1>
+        <h1 align="center">Welcome</h1>
         <hr />
-        <p>
-        Your phone no is {{phoneno}}
-        </p>
+        <form action="" method="post">
+            <p align="center">请输入您的手机号码获取登录验证码：</p>
+            <p align="center"><input type="text" name="phone_no" value="{{phone_no}}">
+            
+            <p align="center">请输入验证码:
+            <input type="text" name="verify_no" >
+            <input type="submit" name="phone" value="发送验证码" /></p>
+        </form>
     </body>
 </html>
