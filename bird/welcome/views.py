@@ -9,7 +9,9 @@ from form import PhoneNoForm
 from publicfun import log
 import models
 import publicfun
+import iptc
 from dboperation import db
+from iptables import iptable
 
 
 def GetClientIP(request):
@@ -67,6 +69,10 @@ def welcome(request):
                     stDB.SaveToTable_OnLine(ip, phoneno)
                     stDB.SaveToTable_HistoryInfo(phoneno)
                     stDB.Delete_WaitForVerify_phone(phoneno)
+                    #add to iptable
+                    table = iptc.Table.FILTER
+                    rule = iptable(table)
+                    rule.add_rule(ip)
                     # direct
                     # return HttpResponseRedirect(request.META['REFEREN'])
                     return HttpResponse("http://www.baidu.com")

@@ -6,7 +6,7 @@ class iptable(object):
     def __init__(self, table=iptc.Table.FILTER):
         self.table = table
 
-    def ShowIptables():
+    def ShowIptables(self):
         table = iptc.Table(iptc.Table.FILTER)
         for chain in table.chains:
             print "===================="
@@ -21,7 +21,7 @@ class iptable(object):
                 print rule.target.name
             print "===================="
 
-    def is_rule(ip):
+    def is_rule_exist(self, ip):
         table = iptc.Table(iptc.Table.FILTER)
         chain = iptc.Chain(table, "INPUT")
         for rule in chain.rules:
@@ -30,10 +30,11 @@ class iptable(object):
                 return True
         return False
 
-    def add_iptable(ip):
-        if is_rule(ip):
+    def add_rule(self, ip):
+        if self.is_rule_exist(ip):
             return False
-        table = iptc.Table(iptc.Table.FILTER)
+        # table = iptc.Table(iptc.Table.FILTER)
+        table = iptc.Table(self.table)
         chain = iptc.Chain(table, "INPUT")
         rule = iptc.Rule()
         rule.src = ip
@@ -43,8 +44,8 @@ class iptable(object):
         chain.insert_rule(rule)
         return True
 
-    def delete_iptable(ip):
-        if not is_rule(ip):
+    def delete_rule(self, ip):
+        if not self.is_rule_exist(ip):
             return False
         table = iptc.Table(iptc.Table.FILTER)
         chain = iptc.Chain(table, "INPUT")

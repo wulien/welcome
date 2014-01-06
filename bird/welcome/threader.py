@@ -7,6 +7,7 @@ import time
 from time import sleep, ctime
 from publicfun import log
 from iptables import iptable
+from dboperation import db
 
 
 class PingTread(threading.Thread):
@@ -33,9 +34,11 @@ class PingTread(threading.Thread):
                             past_time = time_now - one_ip[1]
                             if past_time > 300:
                                 # delete iptable and this ip
-                                iptable.delete_iptable(ip.ip)
-                                p = models.OnLine.get(ip=ip.ip)
-                                p.delete()
+                                table = iptc.Table.FILTER
+                                rule = iptable(table)
+                                rule.delete_rule(ip)
+                                stDB = db()
+                                stDB.Delete_OnLine_Phone(ip)
                                 offline.remove(one_ip)
                                 strLog = 'remove ip:' + ip.ip
                                 log(strLog)

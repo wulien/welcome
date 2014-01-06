@@ -42,6 +42,14 @@ class db(object):
             return False
         return True
 
+    def Delete_OnLine_Phone(self, ip):
+        try:
+            p = OnLine.objects.get(ip=ip)
+        except OnLine.DoesNotExist:
+            return True
+        p.delete()
+        return True
+
     #operation for table HistoryInfo
     def SaveToTable_HistoryInfo(self, phone_no):
         table = HistoryInfo()
