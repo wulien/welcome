@@ -1,5 +1,5 @@
 from models import WaitForVerify, OnLine, HistoryInfo
-
+from publicfun import log
 class db(object):
 
     #operation for table WaitForVerify
@@ -19,6 +19,14 @@ class db(object):
             return False
         return True
 
+    def Delete_WaitForVerify_phone(self, phone):
+        try:
+            p = WaitForVerify.objects.get(phone_no=phone)
+        except WaitForVerify.DoesNotExist:
+            return True
+        p.delete()
+        return True
+
     #operation for table OnLine
     def SaveToTable_OnLine(self, ip, phone_no):
         table = OnLine()
@@ -28,6 +36,7 @@ class db(object):
 
     def check_phone_online(self, phone):
         try:
+            log('check_phone_online, phone_no=%s' % phone)
             OnLine.objects.get(phone_no=phone)
         except OnLine.DoesNotExist:
             return False

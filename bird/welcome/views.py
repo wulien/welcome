@@ -30,7 +30,9 @@ def welcome(request):
             form_data = form.cleaned_data
             ip = GetClientIP(request)
             phoneno = form_data['phone_no']
-            verifyno = form_data['verify_no']
+            verifyno = form_data['verify_no']            
+            for k, v in request.POST.items():
+                log("POST[%s] = %s" % (k, v))
             if request.POST.has_key('phone'):
                 if not publicfun.CheckPhoneNo(phoneno):
                     phone_no_error = True
@@ -41,6 +43,7 @@ def welcome(request):
                     # check phone_no in db
                     wait_verify_db = db()
                     if wait_verify_db.check_phone_online(phoneno):
+                        log('phone is exsit')
                         phone_no_error = True
                         error_message = "您的手机号已经使用过，请换一个手机号验证！"
                         return render_to_response('welcomebase.html', locals())
@@ -49,10 +52,11 @@ def welcome(request):
                             ip, phoneno, publicfun.GenerateRandomNo())
                         tmp_phone_no = phoneno
                         return render_to_response('welcomebase.html', locals())
-            elif request.POST.has_key('verifyno'):
+            elif request.POST.has_key('verify'):
                 # read db check verifyno
+                log('verifyno=%s' % verifyno)
                 stDB = db()
-                if not stDB.check_verify_no(verifyno, form.phone_no):
+                if not stDB.check_verify_no(verifyno, phoneno):
                     verify_no_error = True
                     error_message = "您输入的验证码有误，请重新输入！"
                     tmp_phone_no = phoneno
@@ -62,9 +66,12 @@ def welcome(request):
                     # save to database
                     stDB.SaveToTable_OnLine(ip, phoneno)
                     stDB.SaveToTable_HistoryInfo(phoneno)
+                    stDB.Delete_WaitForVerify_phone(phoneno)
                     # direct
                     # return HttpResponseRedirect(request.META['REFEREN'])
-                    return HttpResponseRedirect("http://www.baidu.com")
+                    return HttpResponse("http://www.baidu.com")
+            else:
+                return HttpResponse('bad error')
     else:
         return render_to_response('welcomebase.html')
 

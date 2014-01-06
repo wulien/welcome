@@ -9,7 +9,7 @@ class WaitForVerify(models.Model):
     reserve = models.CharField(max_length=32)
 
     def __unicode__(self):
-        pass
+        return self.phone_no
 
 class OnLine(models.Model):
     ip = models.IPAddressField()
@@ -17,12 +17,12 @@ class OnLine(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        pass
+        return self.phone_no
 
 class HistoryInfo(models.Model):
     phone_no = models.CharField(max_length=16)
     time = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        pass
+        return self.phone_no
 
