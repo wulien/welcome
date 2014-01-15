@@ -4,17 +4,14 @@
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.views.decorators.csrf import csrf_protect
 from form import PhoneNoForm
 from publicfun import log
-import models
 import publicfun
-import iptc
 from dboperation import db
 from iptables import iptable
 
 
-def GetClientIP(request):
+def GetClientIPAndUrl(request):
     for k, v in request.GET.items():
         log("GET[%s] = %s" % (k, v))
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -22,15 +19,20 @@ def GetClientIP(request):
         ip = x_forwarded_for.split(',')[-1].strip()
     else:
         ip = request.META.get('REMOTE_ADDR')
-    return ip
+    try:
+        before_url = request.META.get('HTTP_HOST')
+    except:
+        before_url = ''
+    return ip, before_url
 
 
 def welcome(request):
+    ip, before_url = GetClientIPAndUrl(request)
+    log('ip = %s, url = %s' % (ip, before_url))
     if request.method == 'POST':
         form = PhoneNoForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            ip = GetClientIP(request)
             phoneno = form_data['phone_no']
             verifyno = form_data['verify_no']            
             for k, v in request.POST.items():
@@ -50,8 +52,7 @@ def welcome(request):
                         error_message = "您的手机号已经使用过，请换一个手机号验证！"
                         return render_to_response('welcomebase.html', locals())
                     else:  # save to database
-                        wait_verify_db.SaveToTable_WaitForVerify(
-                            ip, phoneno, publicfun.GenerateRandomNo())
+                        wait_verify_db.SaveToTable_WaitForVerify(ip, phoneno, publicfun.GenerateRandomNo())
                         tmp_phone_no = phoneno
                         return render_to_response('welcomebase.html', locals())
             elif request.POST.has_key('verify'):
@@ -70,12 +71,19 @@ def welcome(request):
                     stDB.SaveToTable_HistoryInfo(phoneno)
                     stDB.Delete_WaitForVerify_phone(phoneno)
                     #add to iptable
-                    table = iptc.Table.FILTER
-                    rule = iptable(table)
-                    rule.add_rule(ip)
+                    rule = iptable()
+                    rule.add_nat_rule(ip)
                     # direct
+                    if not before_url:
+                        log('url is empty')
+                        return HttpResponseRedirect("http://www.baidu.com")
+                    else:
+                        log('url = %s' % before_url)
+                        if 'http' not in before_url:
+                            before_url = 'http://' + before_url
+                        return HttpResponseRedirect(before_url)
                     # return HttpResponseRedirect(request.META['REFEREN'])
-                    return HttpResponse("http://www.baidu.com")
+                    
             else:
                 return HttpResponse('bad error')
     else:
@@ -109,20 +117,25 @@ def verify_no(request):
     #         pass
 
 def hello(request):
-    if request.method == 'POST':
-        form = PhoneNoForm(request.POST)
-        for k, v in request.POST.items():
-            log("POST[%s] = %s" % (k, v))
-        # form = PhoneNoForm({'phone_no': '123', 'verifyno': '2'})
-        if form.is_valid():
-            log("form.cleaned_data = %s" % form.cleaned_data['phone_no'])
-            data = form.cleaned_data
-            phone_no = data['phone_no']
-            log('phone_no = %s' % phone_no)
-            # return render_to_response('result.html', {'phone_no': phone_no})
-            return HttpResponse('hello')
-    return render_to_response('result.html')
-
+    return HttpResponse('hello')
+    # if request.method == 'POST':
+    #     form = PhoneNoForm(request.POST)
+    #     for k, v in request.POST.items():
+    #         log("POST[%s] = %s" % (k, v))
+    #     # form = PhoneNoForm({'phone_no': '123', 'verifyno': '2'})
+    #     if form.is_valid():
+    #         log("form.cleaned_data = %s" % form.cleaned_data['phone_no'])
+    #         data = form.cleaned_data
+    #         phone_no = data['phone_no']
+    #         log('phone_no = %s' % phone_no)
+    #         # return render_to_response('result.html', {'phone_no': phone_no})
+    #         return HttpResponse('hello')
+    # return render_to_response('result.html')
     # cd = form.cleaned_data
     # phone_no = cd['phone_no']
     # return render_to_response('result.html', {'phone_no': phone_no})
+
+def hehe(request):
+    for k, v in request.META.items():
+        log("META[%s] = %s" % (k, v))
+    return HttpResponse('hehe')

@@ -4,11 +4,14 @@ class db(object):
 
     #operation for table WaitForVerify
     def SaveToTable_WaitForVerify(self, ip, phone_no, random_no):
+        if self.Check_WaitForVerify(ip, phone_no):
+            return False
         table = WaitForVerify()
         table.ip = ip
         table.phone_no = phone_no
         table.random_no = random_no
         table.save()
+        return True
 
     def check_verify_no(self, verify_no, phone_no):
         try:
@@ -16,6 +19,13 @@ class db(object):
         except WaitForVerify.DoesNotExist:
             return False
         if p.phone_no != phone_no:
+            return False
+        return True
+
+    def Check_WaitForVerify(self, ip, phone_no):
+        try:
+            WaitForVerify.objects.get(ip=ip, phone_no=phone_no)
+        except WaitForVerify.DoesNotExist:
             return False
         return True
 
